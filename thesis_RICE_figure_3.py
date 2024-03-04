@@ -1,0 +1,93 @@
+from model.RICE_model.IAM_RICE import RICE
+from optimizer.forest_borg import ForestBorg
+from visualizations import Visualization
+import logging
+import pickle
+import numpy as np
+import time
+import os
+
+package_directory = os.path.dirname(os.path.abspath(__file__))
+path_to_dir = os.path.join(package_directory)
+
+
+def optimization_RICE_ForestBorg_continuous(save_location, model_name, seed, max_nfe, depth, epsilons, gamma, tau, restart_interval, version,
+                               scenario=None, scenario_name=None):
+    title_of_run = f'{model_name}_ForestBORG_continuous_seed{seed}_nfe{max_nfe}_depth{depth}_epsilons{epsilons}_gamma{gamma}_tau{tau}_restart{restart_interval}_v{version}'
+    start = time.time()
+
+    # Set up the model
+    years_10 = []
+    for i in range(2005, 2315, 10):
+        years_10.append(i)
+
+    regions = [
+        "US",
+        "OECD-Europe",
+        "Japan",
+        "Russia",
+        "Non-Russia Eurasia",
+        "China",
+        "India",
+        "Middle East",
+        "Africa",
+        "Latin America",
+        "OHI",
+        "Other non-OECD Asia",
+    ]
+    model = RICE(years_10, regions)
+    # model = RICE(years_10, regions, scenario=scenario)
+
+    # Set up the optimizer - ForestBORG
+    master_rng = np.random.default_rng(seed)  # Master RNG
+    snapshots = ForestBorg(pop_size=100, master_rng=master_rng,
+                           model=model.POT_control_continuous,
+                           metrics=['period_utility', 'damages', 'temp_overshoots'],
+                           # Tree variables
+                           action_names=['miu', 'sr', 'irstp'],
+                           action_bounds=[[2065, 2305], [0.1, 0.5], [0.01, 0.1]],
+                           feature_names=['mat', 'net_output', 'year'],
+                           feature_bounds=[[780, 1300], [55, 2300], [2005, 2305]],
+                           max_depth=depth,
+                           discrete_actions=False,
+                           discrete_features=False,
+                           # Optimization variables
+                           mutation_prob=0.5,
+                           max_nfe=max_nfe,  # 20000,
+                           epsilons=epsilons,  # np.array([0.05, 0.05, 0.05]),
+                           gamma=gamma,  # 4,
+                           tau=tau,  # 0.02,
+                           # restart_interval=restart_interval,
+                           save_location=save_location,
+                           title_of_run=title_of_run,
+                           ).run()
+    pickle.dump(snapshots, open(f'{save_location}/{title_of_run}_snapshots.pkl', 'wb'))
+    end = time.time()
+    return print(f'Total elapsed time: {(end - start) / 60} minutes.')
+
+
+if __name__ == '__main__':
+    # Define input parameters for optimization run
+    save_location = path_to_dir + '/output_data'
+    model_name = "RICE"
+    version = 1
+
+    # Algorithm input variables
+    max_nfe = 20000  # Determines the total number of offspring that are created
+    depths = [2, 3, 4, 5, 6]  # Determines the maximum tree depth of the tree structured decision variable
+    epsilons = np.array([0.05, 0.05, 0.05])  # Sets the margin of insignificance (when 2 solutions are perceived as equally optimal) per objective, so for a 3 objective problem the array should contain 3 epsilon values
+    gammas = [3, 4, 5]  # Sets the population-to-archive ratio
+    tau = 0.02  #
+    restart_intervals = [500, 2000, 5000]
+    seeds = 42
+    for depth in depths:
+        for gamma in gammas:
+            for restart_interval in restart_intervals:
+                optimization_RICE_ForestBorg_continuous(save_location, model_name, seeds, max_nfe, depth, epsilons, gamma, tau,
+                                           restart_interval, version, scenario=None, scenario_name=None)
+
+    # Wait for optimization to complete...
+
+    # Produce figure
+    save = True
+    Visualization(save, model_name, seeds, max_nfe, depths, epsilons, gammas, tau, restart_intervals, version, controllability_map=True).controllability_map_thesis_figure_3()
