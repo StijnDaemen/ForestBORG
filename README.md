@@ -178,8 +178,8 @@ This function takes as input a policy tree P and returns the objective function 
 For every timestep in the model, the policy tree is unpacked (important: code the feature variables in the same order as the input for ForestBORG) and the system is evaluated through the feature variables. The policy tree points to a certain action based on the system evaluation. For a system with 3 overarching actions (mu, sr and irstp), these actions are set at every timestep. The model is then run for one timestep, which produces a reward based on the specified metrics. This is repeated for every timestep and at the end of the simulation all rewards are collected and outputted as objective function values for each metric. Note that over the simulation horizon the policy tree P is static but the actions are dynamic due to changing system conditions.
 Once you have added this function within your model class, you can set the function parameters of ForestBORG.
 
-### What is the output?
-The output of the optimization run is a pickle file that contains snapshots of the optimization run.
+### What does the output look like?
+The output of the optimization run is a pickle file that contains snapshots of the optimization run. These files are automatically stored in the output_data folder.
 The pickle file holds a dictionary, setup in forest_borg.py, that holds the following information:
 ```python
 self.snapshot_dict = {'nfe': [],
@@ -201,7 +201,7 @@ self.snapshot_dict = {'nfe': [],
                                     'discrete_features': self.discrete_features,
                                     'discrete_actions': self.discrete_actions}}
 ```
-Visualizations are used to turn such a dictionary of snapshots into comprehensible results. Note that currently the visualizations are specified to the RICE and Folsom models and need tweaking if other models are used. You can also create your own visualizations with the snapshots dictionary. The optimization run and the visualizations are not neccesarily connected.
+Visualizations are used to turn such a dictionary of snapshots into comprehensible results. Note that currently the visualizations are specified to the RICE and Folsom models and need tweaking if other models are used. Visualizations are automatically stored in the Figs folder, within the output_data folder. You can also create your own visualizations with the snapshots dictionary. The optimization run and the visualizations are not neccesarily connected.
 
 ## Visualization
 The package contains a visualizations.py file which offers methods to plot the objective space, decision trees, and the distribution of genetic operators over time. The currently implemented visualizations are used in the thesis work 'Policy_Optimization_Trees_master_thesis_final.pdf'. The range of currently possible visualizations can be quickly understood from the Results section of the thesis.
