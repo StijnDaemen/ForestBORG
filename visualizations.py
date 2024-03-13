@@ -352,7 +352,7 @@ class Visualization:
 
     def parallel_axis_plot_thesis_figure_4(self):
         # -- Figure IV: Parallel Axis Plots --------------
-        snapshots = self.all_snapshots[3]  # Randomly choose the third seed
+        snapshots = self.all_snapshots[2]  # Randomly choose the third seed
         data = transform_objectives(snapshots['normalized_objectives'][-1])
         df = pd.DataFrame(data)
 
@@ -421,7 +421,7 @@ class Visualization:
     def individual_trees_thesis_figure_5(self):
         # -- Figure V: Individual Policy Trees --------------
         # Take the solutions from Figure IV
-        snapshots = self.all_snapshots[3]  # Randomly choose the third seed
+        snapshots = self.all_snapshots[2]  # Randomly choose the third seed
         data = transform_objectives(snapshots['normalized_objectives'][-1])
         df = pd.DataFrame(data)
 
@@ -697,7 +697,7 @@ class VisualizationDiscrete:
 
     def parallel_axis_plot_thesis_figure_4(self):
         # -- Figure IV: Parallel Axis Plots --------------
-        snapshots = self.all_snapshots[3]
+        snapshots = self.all_snapshots[1]
         data = transform_objectives(snapshots['normalized_objectives'][-1])
         df = pd.DataFrame(data)
 
@@ -766,7 +766,7 @@ class VisualizationDiscrete:
     def individual_trees_thesis_figure_5(self):
         # -- Figure V: Individual Policy Trees --------------
         # Take the solutions from Figure IV
-        snapshots = self.all_snapshots[3]
+        snapshots = self.all_snapshots[1]
         data = transform_objectives(snapshots['normalized_objectives'][-1])
         df = pd.DataFrame(data)
 

@@ -61,7 +61,7 @@ def optimization_Folsom_ForestBorg_discrete(save_location, model_name, seed, max
     snapshots = ForestBorg(pop_size=100,
                            model=model.f,
                            master_rng=master_rng,
-                           # metrics=['period_utility', 'damages', 'temp_overshoots'],
+                           metrics=['period_utility', 'damages', 'temp_overshoots'],
                            # Tree variables
                            action_names=['Release_Demand', 'Hedge_90', 'Hedge_80',
                                          'Hedge_70', 'Hedge_60', 'Hedge_50', 'Flood_Control'],
@@ -93,7 +93,7 @@ if __name__ == '__main__':
     version = 1
 
     # Algorithm input variables
-    max_nfe = 200 #20000
+    max_nfe = 20000
     depths = [2, 3, 4, 5, 6]
     epsilons = np.array([0.01, 1000, 0.01, 10])
     gammas = [3, 4, 5]
@@ -101,10 +101,10 @@ if __name__ == '__main__':
     restart_intervals = [500, 2000, 5000]
     seeds = 42
     # -- III -- Controllability map -  control for depth, gamma and restart_interval, for now on one seed
-    # for depth in depths:
-    #     for gamma in gammas:
-    #         for restart_interval in restart_intervals:
-    #             optimization_Folsom_ForestBorg_discrete(save_location, model_name, seeds, max_nfe, depth, epsilons, gamma, tau, restart_interval, version)
+    for depth in depths:
+        for gamma in gammas:
+            for restart_interval in restart_intervals:
+                optimization_Folsom_ForestBorg_discrete(save_location, model_name, seeds, max_nfe, depth, epsilons, gamma, tau, restart_interval, version)
 
     # Wait for optimization to complete...
 
